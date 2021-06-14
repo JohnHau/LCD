@@ -1,3 +1,4 @@
+#include<string.h>
 #include "bsp_i2c_ee.h"
 #include "bsp_i2c_gpio.h"
 #include "bsp_usart.h" 
@@ -697,12 +698,12 @@ uint8_t font8x8_basic[128][8] = {
 
 
 
-uint8_t reverse_array(uint8_t*array,uint8_t len)
+uint8_t reverse_array(uint8_t*array,uint8_t* rv,uint8_t len)
 {
 
 	uint8_t i=0;
 	uint8_t temp=0;
-
+#if 0
 	for(i=0;i<len/2;i++)
 	{
 
@@ -711,6 +712,17 @@ uint8_t reverse_array(uint8_t*array,uint8_t len)
 		array[len-1-i]=temp;
 
 	}
+#endif
+	
+	for(i=0;i<len-1;i++)
+	{	
+		rv[i] = array[len-1-i];	
+	}
+	
+	
+	
+	
+	
 	return 1;
 }
 
@@ -718,18 +730,23 @@ uint8_t reverse_array(uint8_t*array,uint8_t len)
 uint8_t rotate_array(uint8_t*in,uint8_t*out)
 {
 	uint8_t i=0;
-  reverse_array(in,8);
+	uint8_t rv[8]={0};
+	
+  reverse_array(in,rv,8);
+	
+	
+	
 	for(i=0;i<8;i++)
 	{
 
-		out[i]= (((in[0]&(1<<i))*(1<<7))>>i) + 
-			(((in[1]&(1<<i))*(1<<6))>>i) + 
-			(((in[2]&(1<<i))*(1<<5))>>i) + 
-			(((in[3]&(1<<i))*(1<<4))>>i) + 
-			(((in[4]&(1<<i))*(1<<3))>>i) + 
-			(((in[5]&(1<<i))*(1<<2))>>i) + 
-			(((in[6]&(1<<i))*(1<<1))>>i) + 
-			(((in[7]&(1<<i))*(1<<0))>>i); 
+		out[i]= (((rv[0]&(1<<i))*(1<<7))>>i) + 
+			(((rv[1]&(1<<i))*(1<<6))>>i) + 
+			(((rv[2]&(1<<i))*(1<<5))>>i) + 
+			(((rv[3]&(1<<i))*(1<<4))>>i) + 
+			(((rv[4]&(1<<i))*(1<<3))>>i) + 
+			(((rv[5]&(1<<i))*(1<<2))>>i) + 
+			(((rv[6]&(1<<i))*(1<<1))>>i) + 
+			(((rv[7]&(1<<i))*(1<<0))>>i); 
 
 		//	printf("out[%d] is %02x\n",i,out[i]);
 
@@ -759,69 +776,51 @@ uint32_t m,n;
 
 }
 
-void oled_096_print(uint8_t col, uint8_t row, int8_t*str)
+void oled_096_print(uint8_t col, uint8_t row, uint8_t*str)
 {
   unsigned char x,y;
   unsigned int i=0;
 	uint8_t out[8]={0};
-	
-	
 			
-					//reverse_array(font8x8_basic['p'],8);
-					rotate_array(font8x8_basic['v'],out);
+	//reverse_array(font8x8_basic['p'],8);
+	//rotate_array(font8x8_basic['v'],out);
 	
 	y=0;
   //for(y=0;y<8;y++)
     {
-      //Write_IIC_Command(0xb0+y);
-      //Write_IIC_Command(0x00);
-      //Write_IIC_Command(0x10);
 			
-			
-		//write_buf[0]=0xb0+7-y;
-		//write_buf[0]=0xb0+y;
-		write_buf[0]=0xb0;
+		write_buf[0]=0xb0 + row;
 	  ee_WriteBytes(write_buf, 0x00, 1);
 	
 		
-		write_buf[0]=0x00;
+		write_buf[0]=0x00 | (col&0x0F);
 	  ee_WriteBytes(write_buf, 0x00, 1);
 		
-		write_buf[0]=0x10;
+		write_buf[0]=0x10 |((col&0xF0)>>4);
 	  ee_WriteBytes(write_buf, 0x00, 1);
 		
 			
-			
-      for(x=0;x<128;x++)
-			//for(x=0;x<16;x++)
-			//for(x=0;x<8;x++)
-        {
-          //Write_IIC_Data(show1[i++]);
-					
-					//write_buf[0]=ASCII_16_Dot[i
-					
-			
-					
-					//write_buf[0]=ASCII_8_Dot[i++];
-					write_buf[0]=out[i++];
-					
-					//if(i==16)i=0;
-					if(i==8)i=0;
-					//write_buf[0]=0xff;
-	        ee_WriteBytes(write_buf, 0x40, 1);
-					
-					//xdelay(20);
-        }
+			while(*str)
+			{
 				
+				rotate_array(font8x8_basic[*str],out);
+				
+				//for(x=0;x<128;x++)
+				//for(x=0;x<16;x++)
+				for(x=0;x<8;x++)
+				{		
+						write_buf[0]=out[i++];
+						
+						//if(i==16)i=0;
+						if(i==8)i=0;
+						//write_buf[0]=0xff;
+						ee_WriteBytes(write_buf, 0x40, 1);
+						
+				}
+				memset(out,0,8);
+				str++;
+			}
 				xdelay(20);
-				
-				
-				
-				
-
-				
-				
-				
 				
 				
 				
