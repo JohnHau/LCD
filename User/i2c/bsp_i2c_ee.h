@@ -22,7 +22,7 @@
 	
 
 //#define EEPROM_DEV_ADDR			0xA0		/* 24xx02的设备地址 */
-#define EEPROM_DEV_ADDR			0x78		/* 24xx02的设备地址 */
+#define EEPROM_DEV_ADDR			0x78		/* ssd1306 address */
 #define EEPROM_PAGE_SIZE		  8			  /* 24xx02的页面大小 */
 #define EEPROM_SIZE				  256			  /* 24xx02总容量 */
 
@@ -36,8 +36,18 @@ uint8_t ee_WaitStandby(void);
 uint8_t ee_Test(void) ;
 
 
-void Initial_LY096BG30(void);
+void Initial_oled_device(void);
 void fill_picture(unsigned char fill_Data);
 void picture_1(void);
+
+
+
+void oled_096_print(uint8_t col, uint8_t row, int8_t*str);
+
+
+
+
+
+
 
 #endif /* __I2C_EE_H */

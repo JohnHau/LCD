@@ -1,3 +1,2 @@
-*.o
-project/Objects/
-project/Listings/
+Listing/*
+Output/*
