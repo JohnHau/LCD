@@ -19,6 +19,8 @@ int main(void)
 	Initial_oled_device();
 	
 	fill_picture(0x00);
+	
+	#if 0
 	oled_096_print(0, 0, tstr);
 	oled_096_print(8, 1, tstr);
 	oled_096_print(16, 2, tstr);
@@ -27,7 +29,12 @@ int main(void)
 	oled_096_print(0, 5, tstr);
 	oled_096_print(0, 6, tstr);
 	oled_096_print(0, 7, tstr);
+	#endif
 	
+	oled_096_print_asc16(0, 0, tstr);
+	oled_096_print_asc16(0, 2, tstr);
+	oled_096_print_asc16(0, 4, tstr);
+	oled_096_print_asc16(0, 6, tstr);
 	
 	while(1);
 	//fill_picture(0xff);

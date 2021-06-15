@@ -43,7 +43,7 @@ void picture_1(void);
 
 
 void oled_096_print(uint8_t col, uint8_t row, uint8_t*str);
-
+void oled_096_print_asc16(uint8_t col, uint8_t row, uint8_t*str);
 
 
 
